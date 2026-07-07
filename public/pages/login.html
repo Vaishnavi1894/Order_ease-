@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — OrderEase</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #390f1d, #4c1834);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: rgb(255, 255, 255);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgb(67, 11, 42);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { font-size: 32px; color: #3d0523; font-weight: 800; }
+        .logo p { color: #491c2a; font-size: 14px; margin-top: 4px; }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #400f20;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #370d1b;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus { border-color: #A6385B; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #440928;
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover { background: #4d0e35; }
+
+        .message {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #ffffff;
+        }
+
+        .message a { color: #ffffff; font-weight: 600; text-decoration: none; }
+
+        .error {
+            background: #301818;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            text-align: center;
+        }
+
+        .success {
+            background: #4d1327;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <div class="logo">
+        <h1>OrderEase</h1>
+        <p>Customer Login</p>
+    </div>
+
+    <div class="error"   id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+
+    <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="Enter your email">
+    </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter your password">
+    </div>
+
+    <button onclick="loginCustomer()">Login</button>
+
+    <div class="message">
+        Don't have an account?
+        <a href="register.html">Register here</a>
+    </div>
+</div>
+
+<script>
+    async function loginCustomer() {
+        const email     = document.getElementById('email').value;
+        const password  = document.getElementById('password').value;
+        const errorMsg  = document.getElementById('errorMsg');
+        const successMsg= document.getElementById('successMsg');
+
+        errorMsg.style.display   = 'none';
+        successMsg.style.display = 'none';
+
+        if (!email || !password) {
+            errorMsg.textContent   = 'Please enter email and password!';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/customer/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('customerToken', data.token);
+                localStorage.setItem('customerName',  data.customer.name);
+
+                successMsg.textContent   = 'Login successful! Redirecting...';
+                successMsg.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                errorMsg.textContent   = data.message;
+                errorMsg.style.display = 'block';
+            }
+        } catch (err) {
+            errorMsg.textContent   = 'Server error. Please try again!';
+            errorMsg.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>

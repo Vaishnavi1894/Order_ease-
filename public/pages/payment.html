@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment — OrderEase</title>
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #966377;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .payment-header {
+            background: #6B1E3C;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-header h2 {
+            color: #f8f6f2;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .amount-badge {
+            background: #f3f3f3;
+            color: #6B1E3C;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e7e1e3;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6f455d;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #240913;
+            border-bottom: 2px solid #6B1E3C;
+            margin-bottom: -2px;
+        }
+
+        /* CONTENT */
+        .tab-content { padding: 24px; display: none; }
+        .tab-content.active { display: block; }
+
+        /* UPI */
+        .upi-apps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .upi-app {
+            text-align: center;
+            padding: 12px 8px;
+            border: 2px solid #32131d;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upi-app:hover {
+            border-color: #6B1E3C;
+            background: #300c19;
+        }
+
+        .upi-app .icon { font-size: 28px; margin-bottom: 4px; }
+        .upi-app .name { font-size: 10px; color: #666; font-weight: 600; }
+
+        .divider {
+            text-align: center;
+            color: #3f1228;
+            font-size: 12px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: #F5E1E8;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after  { right: 0; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B1E3C;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #F5E1E8;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        input:focus { border-color: #6B1E3C; }
+
+        /* CARD */
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* PAY BUTTON */
+        .pay-btn {
+            width: 100%;
+            background: #6B1E3C;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pay-btn:hover { background: #A6385B; }
+
+        /* PROCESSING SCREEN */
+        .processing {
+            display: none;
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #F5E1E8;
+            border-top-color: #6B1E3C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .processing h3 {
+            color: #6B1E3C;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .processing p {
+            color: #3A1320;
+            font-size: 13px;
+        }
+
+        /* SECURE BADGE */
+        .secure {
+            text-align: center;
+            padding: 12px;
+            background: #F5E1E8;
+            font-size: 11px;
+            color: #6B1E3C;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-box">
+
+    <!-- HEADER -->
+    <div class="payment-header">
+        <h2>💳 OrderEase Pay</h2>
+        <div class="amount-badge" id="displayAmount">₹0</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('upi')">📱 UPI</div>
+        <div class="tab" onclick="switchTab('card')">💳 Card</div>
+        <div class="tab" onclick="switchTab('netbanking')">🏦 Net Banking</div>
+    </div>
+
+    <!-- UPI TAB -->
+    <div class="tab-content active" id="upi">
+        <div class="upi-apps">
+            <div class="upi-app" onclick="selectUpiApp('GPay')">
+                <div class="icon">🟢</div>
+                <div class="name">GPay</div>
+            </div>
+            <div class="upi-app" onclick="selectUpiApp('PhonePe')">
+                <div class="icon">🟣</div>
+                <div class="name">PhonePe</div>
+            </div>
+            <div class="upi-app" onclick="selectUpiApp('Paytm')">
+                <div class="icon">🔵</div>
+                <div class="name">Paytm</div>
+            </div>
+            <div class="upi-app" onclick="selectUpiApp('BHIM')">
+                <div class="icon">🟠</div>
+                <div class="name">BHIM</div>
+            </div>
+        </div>
+
+        <div class="divider">OR enter UPI ID</div>
+
+        <label>UPI ID</label>
+        <input type="text" id="upiId"
+               placeholder="e.g. yourname@upi">
+
+        <button class="pay-btn" onclick="processPayment()">
+            Pay Now →
+        </button>
+    </div>
+
+    <!-- CARD TAB -->
+    <div class="tab-content" id="card">
+        <label>Card Number</label>
+        <input type="text" id="cardNumber"
+               placeholder="1234 5678 9012 3456" maxlength="19">
+
+        <label>Card Holder Name</label>
+        <input type="text" placeholder="Name on card">
+
+        <div class="card-row">
+            <div>
+                <label>Expiry Date</label>
+                <input type="text" placeholder="MM/YY" maxlength="5">
+            </div>
+            <div>
+                <label>CVV</label>
+                <input type="password" placeholder="***" maxlength="3">
+            </div>
+        </div>
+
+        <button class="pay-btn" onclick="processPayment()">
+            Pay Securely →
+        </button>
+    </div>
+
+    <!-- NET BANKING TAB -->
+    <div class="tab-content" id="netbanking">
+        <label>Select Your Bank</label>
+        <input type="text" placeholder="Search bank name...">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;">
+            <div class="upi-app" onclick="processPayment()">
+                <div class="icon">🏦</div>
+                <div class="name">SBI</div>
+            </div>
+            <div class="upi-app" onclick="processPayment()">
+                <div class="icon">🏦</div>
+                <div class="name">HDFC</div>
+            </div>
+            <div class="upi-app" onclick="processPayment()">
+                <div class="icon">🏦</div>
+                <div class="name">ICICI</div>
+            </div>
+            <div class="upi-app" onclick="processPayment()">
+                <div class="icon">🏦</div>
+                <div class="name">Axis</div>
+            </div>
+        </div>
+
+        <button class="pay-btn" onclick="processPayment()">
+            Proceed to Bank →
+        </button>
+    </div>
+
+    <!-- PROCESSING SCREEN -->
+    <div class="processing" id="processing">
+        <div class="spinner"></div>
+        <h3>Processing Payment...</h3>
+        <p>Please wait while we confirm your payment</p>
+    </div>
+
+    <!-- SECURE BADGE -->
+    <div class="secure">
+        🔒 100% Secure Payment — Powered by OrderEase Pay
+    </div>
+
+</div>
+
+<script>
+    // Get amount from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const subtotal = cart.reduce((sum, item) =>
+        sum + (item.price * item.quantity), 0);
+    const total = subtotal + 50;
+    document.getElementById('displayAmount').textContent = '₹' + total;
+
+    // Switch tabs
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(c => {
+            c.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        document.getElementById(tab).classList.add('active');
+    }
+
+    // Select UPI app
+    function selectUpiApp(app) {
+        document.getElementById('upiId').value = 'success@' + app.toLowerCase();
+        document.querySelectorAll('.upi-app').forEach(a => {
+            a.style.borderColor = '#F5E1E8';
+            a.style.background  = 'white';
+        });
+        event.currentTarget.style.borderColor = '#6B1E3C';
+        event.currentTarget.style.background  = '#F5E1E8';
+    }
+
+    // Process payment
+    function processPayment() {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(c => {
+            c.style.display = 'none';
+        });
+
+        // Show processing spinner
+        document.getElementById('processing').style.display = 'block';
+
+        // After 2.5 seconds — redirect to order confirmation
+        setTimeout(() => {
+            placeOrderAndRedirect();
+        }, 2500);
+    }
+
+    // Place order and redirect
+    async function placeOrderAndRedirect() {
+        const token       = localStorage.getItem('customerToken');
+        const orderData   = JSON.parse(localStorage.getItem('pendingOrder') || '{}');
+
+        try {
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type':  'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.removeItem('cart');
+                localStorage.removeItem('pendingOrder');
+                localStorage.setItem('lastOrderId', data.order_id);
+                window.location.href = 'order-confirm.html';
+            } else {
+                alert('Order failed: ' + data.message);
+                window.location.href = 'checkout.html';
+            }
+        } catch (err) {
+            alert('Server error!');
+            window.location.href = 'checkout.html';
+        }
+    }
+</script>
+
+</body>
+</html>

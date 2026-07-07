@@ -1,0 +1,209 @@
+/* ============================================
+   OrderEase — Shared Animations & Hover Effects
+   ============================================ */
+
+/* Smooth transitions on everything by default */
+* {
+    transition: transform 0.25s ease, box-shadow 0.25s ease,
+                background-color 0.25s ease, color 0.25s ease,
+                border-color 0.25s ease, opacity 0.25s ease;
+}
+
+/* Fade + slide in on page load */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+body {
+    animation: fadeInUp 0.4s ease;
+}
+
+/* Product cards lift + shadow grow on hover */
+.product-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 12px 28px rgba(27, 67, 50, 0.18);
+}
+
+.product-card img {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.06);
+}
+
+/* Buttons — press + glow effect */
+button, .add-cart-btn, .checkout-btn, .place-order-btn,
+.hero-btn, .add-btn, .filter-btn, .logout-btn, .shop-btn {
+    transition: all 0.2s ease;
+}
+
+button:hover, .add-cart-btn:hover, .checkout-btn:hover,
+.place-order-btn:hover, .hero-btn:hover, .add-btn:hover,
+.filter-btn:hover, .logout-btn:hover, .shop-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 67, 50, 0.25);
+}
+
+button:active, .add-cart-btn:active, .checkout-btn:active,
+.place-order-btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* Sidebar links — slide in highlight */
+.sidebar a {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar a::before {
+    content: "";
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.08);
+    transition: left 0.3s ease;
+}
+
+.sidebar a:hover::before {
+    left: 0;
+}
+
+/* Nav links underline animation */
+.nav-links a {
+    position: relative;
+}
+
+.nav-links a:not(.cart-btn)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0%;
+    height: 2px;
+    background: #A6385B;
+    transition: width 0.25s ease;
+}
+
+.nav-links a:not(.cart-btn):hover::after {
+    width: 100%;
+}
+
+/* Cart badge pulse when item count > 0 */
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+#cartCount {
+    display: inline-block;
+}
+
+/* Stat cards on dashboard — subtle float */
+.card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(27, 67, 50, 0.12);
+}
+
+/* Action buttons on dashboard */
+.action-btn {
+    transition: all 0.25s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(27, 67, 50, 0.2);
+}
+
+/* Table rows — soft highlight slide */
+tbody tr {
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+tbody tr:hover {
+    transform: translateX(2px);
+}
+
+/* Status badges — gentle pop on load */
+@keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.status-badge {
+    animation: popIn 0.3s ease;
+}
+
+/* Input focus glow */
+input:focus, textarea:focus, select:focus {
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2);
+}
+
+/* Login/Register box entrance */
+.login-box, .register-box, .confirm-box {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* Quantity buttons bounce */
+.qty-btn:active {
+    transform: scale(0.85);
+}
+
+/* Delete/Remove buttons shake on hover */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-2px); }
+    75%      { transform: translateX(2px); }
+}
+
+.delete-btn:hover, .remove-btn:hover {
+    animation: shake 0.3s ease;
+}
+
+/* Feature cards stagger fade-in */
+.feature-card {
+    animation: fadeInUp 0.5s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(27, 67, 50, 0.12);
+}
+
+/* Order confirmation check icon bounce */
+@keyframes bounceIn {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.check-icon {
+    animation: bounceIn 0.6s ease;
+}
+
+/* Step dots fill animation */
+.step .dot {
+    transition: background-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
+}
+
+.step.active .dot {
+    transform: scale(1.1);
+}
+
+/* Loading text gentle pulse */
+@keyframes textPulse {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+}
+
+.no-products, .no-orders {
+    animation: textPulse 1.5s ease infinite;
+}

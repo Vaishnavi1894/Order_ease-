@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — OrderEase</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #6B1E3C; }
+
+        .navbar {
+            background: #481529;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 { color: #ffffff; font-size: 24px; font-weight: 800; }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 24px;
+            grid-column: 1/-1;
+        }
+
+        .form-box {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            height: fit-content;
+        }
+
+        .form-box h3 {
+            color: #6B1E3C;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B1E3C;
+            margin-bottom: 6px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #F5E1E8;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        input:focus, textarea:focus, select:focus { border-color: #A6385B; }
+        textarea { resize: vertical; min-height: 70px; }
+
+        .delivery-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .option-card {
+            border: 2px solid #F5E1E8;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B1E3C;
+            transition: all 0.2s;
+        }
+
+        .option-card.selected {
+            background: #6B1E3C;
+            color: white;
+            border-color: #6B1E3C;
+        }
+
+        .summary-box {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            height: fit-content;
+        }
+
+        .summary-box h3 {
+            color: #6B1E3C;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #3A1320;
+            margin-bottom: 10px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #3A1320;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6B1E3C;
+            border-top: 2px solid #F5E1E8;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            background: #6B1E3C;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .place-order-btn:hover { background: #A6385B; }
+
+        .error {
+            background: #ffe0e0;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            text-align: center;
+            grid-column: 1/-1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>OrderEase</h1>
+</div>
+
+<div class="container">
+    <div class="page-title">📝 Checkout</div>
+    <div class="error" id="errorMsg"></div>
+
+    <!-- DELIVERY FORM -->
+    <div class="form-box">
+        <h3>🚚 Delivery Details</h3>
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="custName" placeholder="Your name">
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="custPhone" placeholder="Your phone number">
+        </div>
+
+        <div class="form-group">
+            <label>Delivery Type</label>
+            <div class="delivery-options">
+                <div class="option-card selected" id="homeDelivery"
+                     onclick="selectDelivery('Home Delivery')">
+                    🏠 Home Delivery
+                </div>
+                <div class="option-card" id="selfPickup"
+                     onclick="selectDelivery('Self Pickup')">
+                    📍 Self Pickup
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" id="addressGroup">
+            <label>Delivery Address</label>
+            <textarea id="address"
+                placeholder="Enter your full address"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Payment Method</label>
+            <select id="payment">
+                <option value="COD">Cash on Delivery (COD)</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="summary-box">
+        <h3>💰 Order Summary</h3>
+        <div id="orderItems"></div>
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subtotalAmt">₹0</span>
+        </div>
+        <div class="summary-row">
+            <span>Delivery Charge</span>
+            <span id="deliveryAmt">₹50</span>
+        </div>
+        <div class="summary-row total">
+            <span>Total</span>
+            <span id="totalAmt">₹0</span>
+        </div>
+        <button class="place-order-btn" onclick="handlePayment()">
+            💳 Pay & Place Order
+        </button>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem('customerToken');
+    if (!token) window.location.href = 'login.html';
+
+    let cart        = JSON.parse(localStorage.getItem('cart') || '[]');
+    let deliveryType = 'Home Delivery';
+
+    if (cart.length === 0) {
+        window.location.href = 'cart.html';
+    }
+
+    // Render order summary
+    function renderSummary() {
+        const itemsDiv = document.getElementById('orderItems');
+        itemsDiv.innerHTML = cart.map(item => `
+            <div class="summary-item">
+                <span>${item.name} x${item.quantity}</span>
+                <span>₹${item.price * item.quantity}</span>
+            </div>
+        `).join('');
+
+        const subtotal = cart.reduce((sum, item) =>
+            sum + (item.price * item.quantity), 0);
+        const delivery = 50;
+        const total    = subtotal + delivery;
+
+        document.getElementById('subtotalAmt').textContent = '₹' + subtotal;
+        document.getElementById('deliveryAmt').textContent = '₹' + delivery;
+        document.getElementById('totalAmt').textContent    = '₹' + total;
+    }
+
+    // Select delivery type
+    function selectDelivery(type) {
+        deliveryType = type;
+        document.getElementById('homeDelivery').classList.toggle(
+            'selected', type === 'Home Delivery');
+        document.getElementById('selfPickup').classList.toggle(
+            'selected', type === 'Self Pickup');
+        document.getElementById('addressGroup').style.display =
+            type === 'Home Delivery' ? 'block' : 'none';
+    }
+    async function handlePayment() {
+    const errorMsg = document.getElementById('errorMsg');
+    errorMsg.style.display = 'none';
+
+    const address = document.getElementById('address').value;
+    const payment = document.getElementById('payment').value;
+
+    if (deliveryType === 'Home Delivery' && !address) {
+        errorMsg.textContent   = 'Please enter delivery address!';
+        errorMsg.style.display = 'block';
+        return;
+    }
+
+    const subtotal = cart.reduce((sum, item) =>
+        sum + (item.price * item.quantity), 0);
+    const total = subtotal + 50;
+
+    // Save order data for payment page
+    const orderData = {
+        items: cart.map(item => ({
+            product_id: item.product_id,
+            quantity:   item.quantity,
+            price:      item.price
+        })),
+        total_amount:     total,
+        payment_method:   payment,
+        delivery_type:    deliveryType,
+        delivery_address: address
+    };
+
+    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+
+    // COD — place order directly
+    if (payment === 'COD') {
+        placeOrder();
+        return;
+    }
+
+    // UPI or Card — go to payment page
+    window.location.href = 'payment.html';
+}
+   
+
+    // Place order in database
+    async function placeOrder() {
+        const errorMsg = document.getElementById('errorMsg');
+        const address  = document.getElementById('address').value;
+        const payment  = document.getElementById('payment').value;
+
+        const subtotal = cart.reduce((sum, item) =>
+            sum + (item.price * item.quantity), 0);
+        const total = subtotal + 50;
+
+        const orderData = {
+            items: cart.map(item => ({
+                product_id: item.product_id,
+                quantity:   item.quantity,
+                price:      item.price
+            })),
+            total_amount:     total,
+            payment_method:   payment,
+            delivery_type:    deliveryType,
+            delivery_address: address
+        };
+
+        try {
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type':  'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.removeItem('cart');
+                localStorage.setItem('lastOrderId', data.order_id);
+                window.location.href = 'order-confirm.html';
+            } else {
+                errorMsg.textContent   = data.message;
+                errorMsg.style.display = 'block';
+            }
+        } catch (err) {
+            errorMsg.textContent   = 'Server error. Please try again!';
+            errorMsg.style.display = 'block';
+        }
+    }
+
+    renderSummary();
+</script>
+
+</body>
+</html>

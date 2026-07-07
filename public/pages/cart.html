@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart — OrderEase</title>
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #d789b2; }
+
+        .navbar {
+            background: #5c173d;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 { color: #ffffff; font-size: 24px; font-weight: 800; }
+
+        .nav-links a {
+            color: #f7f7f7;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .cart-btn {
+            background: #ae4986;
+            color: rgb(69, 12, 46);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #38101d;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        /* CART ITEMS */
+        .cart-box {
+            background: rgb(163, 66, 114);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(72, 3, 43, 0.977);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto auto auto;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #591036d1;
+        }
+
+        .cart-item:last-child { border-bottom: none; }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #0e0303;
+        }
+
+        .item-name { font-size: 14px; font-weight: 600; color: #ffffff; }
+        .item-price { font-size: 13px; color: #fefdfd; margin-top: 4px; }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            background: #cdabb7;
+            color: #3b0e1e;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .qty-btn:hover { background: #340917; color: white; }
+
+        .qty-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: #efeaec;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .item-total {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f8f5f6;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .remove-btn {
+            background: #ffe0e0;
+            color: #210415;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover { background: #bd4d8b; color: white; }
+
+        /* SUMMARY BOX */
+        .summary-box {
+            background: rgb(153, 62, 103);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(196, 58, 145, 0.855);
+            padding: 24px;
+        }
+
+        .summary-box h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #fafafa;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f7f7f7;
+            border-top: 2px solid #ffffff;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #fbfbfb;
+            color: rgb(72, 12, 50);
+            border: 2px solid #4d1528;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover { background: #ffc0d4; }
+
+        .continue-btn {
+            width: 100%;
+            background: rgb(250, 247, 249);
+            color: #3d072a;
+            border: 2px solid #4d1528;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px;
+            color: #ffffff;
+        }
+
+        .empty-cart p { font-size: 40px; margin-bottom: 16px; }
+        .empty-cart h3 { font-size: 18px; margin-bottom: 8px; color: #F5E1E8; }
+
+        .shop-btn {
+            display: inline-block;
+            background: #791f3e;
+            color: rgb(251, 247, 247);
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h1>OrderEase</h1>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="login.html" id="loginLink">Login</a>
+        <a href="cart.html" class="cart-btn">
+            🛒 Cart (<span id="cartCount">0</span>)
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-title">🛒 My Cart</div>
+    <div id="cartContent"></div>
+</div>
+
+<script>
+    // Login link
+    const customerToken = localStorage.getItem('customerToken');
+    const customerName  = localStorage.getItem('customerName');
+    if (customerToken) {
+        document.getElementById('loginLink').textContent = customerName || 'My Account';
+    }
+
+    function renderCart() {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const content = document.getElementById('cartContent');
+        document.getElementById('cartCount').textContent = cart.length;
+
+        if (cart.length === 0) {
+            content.innerHTML = `
+                <div class="cart-box">
+                    <div class="empty-cart">
+                        <p>🛒</p>
+                        <h3>Your cart is empty!</h3>
+                        <p style="font-size:14px">Add some products to get started</p>
+                        <a href="products.html" class="shop-btn">Browse Products</a>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const delivery = 50;
+        const total    = subtotal + delivery;
+
+        content.innerHTML = `
+            <div class="cart-box">
+                ${cart.map((item, index) => `
+                    <div class="cart-item">
+                        <img src="https://placehold.co/80" alt="${item.name}">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-price">₹${item.price} each</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn"
+                                onclick="changeQty(${index}, -1)">−</button>
+                            <span class="qty-num">${item.quantity}</span>
+                            <button class="qty-btn"
+                                onclick="changeQty(${index}, 1)">+</button>
+                        </div>
+                        <div class="item-total">₹${item.price * item.quantity}</div>
+                        <button class="remove-btn"
+                            onclick="removeItem(${index})">🗑️ Remove</button>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="summary-box">
+                <h3>💰 Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹${subtotal}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charge</span>
+                    <span>₹${delivery}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₹${total}</span>
+                </div>
+                <button class="checkout-btn" onclick="goToCheckout()">
+                    Proceed to Checkout →
+                </button>
+                <a href="products.html" class="continue-btn">
+                    ← Continue Shopping
+                </a>
+            </div>
+        `;
+    }
+
+    function changeQty(index, change) {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function goToCheckout() {
+        const token = localStorage.getItem('customerToken');
+        if (!token) {
+            alert('Please login to proceed to checkout!');
+            window.location.href = 'login.html';
+            return;
+        }
+        window.location.href = 'checkout.html';
+    }
+
+    renderCart();
+</script>
+
+</body>
+</html>

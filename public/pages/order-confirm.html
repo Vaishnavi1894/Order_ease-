@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed — OrderEase</title>
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F5E1E8, #A6385B);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirm-box {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgb(80, 4, 49);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        .check-icon {
+            font-size: 70px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            color: #390a1a;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #330816;
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .order-id-box {
+            background: #411323;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .order-id-box .label {
+            font-size: 12px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .order-id-box .id {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .step .dot {
+            width: 30px;
+            height: 30px;
+            background: #390e1d;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .step.active .dot { background: #2d0f1a; color: white; }
+
+        .step .label {
+            font-size: 10px;
+            color: #3A1320;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #411323;
+            color: white;
+        }
+
+        .btn-primary:hover { background: #A6385B; }
+
+        .btn-secondary {
+            background: rgb(58, 20, 33);
+            color: #F5E1E8;
+            border: 2px solid #F5E1E8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="confirm-box">
+    <div class="check-icon">✅</div>
+    <h1>Order Placed Successfully!</h1>
+    <p>Thank you for your order! The seller has been notified and will process your order shortly.</p>
+
+    <div class="order-id-box">
+        <div class="label">YOUR ORDER ID</div>
+        <div class="id" id="orderId">#0000</div>
+    </div>
+
+    <div class="steps">
+        <div class="step active">
+            <div class="dot">✓</div>
+            <div class="label">Placed</div>
+        </div>
+        <div class="step">
+            <div class="dot">2</div>
+            <div class="label">Confirmed</div>
+        </div>
+        <div class="step">
+            <div class="dot">3</div>
+            <div class="label">Packed</div>
+        </div>
+        <div class="step">
+            <div class="dot">4</div>
+            <div class="label">Shipped</div>
+        </div>
+        <div class="step">
+            <div class="dot">5</div>
+            <div class="label">Delivered</div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <a href="my-orders.html" class="btn btn-primary">Track Order</a>
+        <a href="products.html" class="btn btn-secondary">Continue Shopping</a>
+    </div>
+</div>
+
+<script>
+    const orderId = localStorage.getItem('lastOrderId');
+    document.getElementById('orderId').textContent = '#' + (orderId || '0000');
+</script>
+
+</body>
+</html>
