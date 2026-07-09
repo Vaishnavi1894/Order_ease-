@@ -85,6 +85,41 @@
     <div class="main">
         <div class="page-title">📋 All Orders</div>
 
+<!-- DATE FILTER -->
+<div style="background:white; padding:16px 20px; border-radius:12px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:20px;
+            display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+    <div>
+        <label style="font-size:12px; font-weight:600; color:#632048;">From Date</label>
+        <input type="date" id="fromDate"
+               style="display:block; padding:8px 12px; border:2px solid #d7add1;
+                      border-radius:8px; font-size:13px; outline:none; margin-top:4px;">
+    </div>
+    <div>
+        <label style="font-size:12px; font-weight:600; color:#632048;">To Date</label>
+        <input type="date" id="toDate"
+               style="display:block; padding:8px 12px; border:2px solid #d7add1;
+                      border-radius:8px; font-size:13px; outline:none; margin-top:4px;">
+    </div>
+    <div style="display:flex; gap:8px; margin-top:20px;">
+        <button onclick="filterOrders()"
+                style="background:#632048; color:white; border:none;
+                       padding:10px 20px; border-radius:8px;
+                       font-size:13px; font-weight:600; cursor:pointer;">
+            🔍 Filter
+        </button>
+        <button onclick="clearFilter()"
+                style="background:white; color:#632048; border:2px solid #d7add1;
+                       padding:10px 20px; border-radius:8px;
+                       font-size:13px; font-weight:600; cursor:pointer;">
+            ✕ Clear
+        </button>
+    </div>
+    <div style="margin-top:20px; font-size:13px; color:#632048; font-weight:600;">
+        Total: <span id="orderCount">0</span> orders
+    </div>
+</div>
+
         <div class="table-box">
             <table>
                 <thead>
@@ -118,59 +153,99 @@
     if (!token) window.location.href = 'login.html';
     document.getElementById('shopName').textContent = shopName || 'My Shop';
 
-    async function loadOrders() {
-        try {
-            const response = await fetch('/api/orders', {
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
-            const orders = await response.json();
-            const tbody  = document.getElementById('orderList');
+    let allOrders = [];
 
-            if (!orders || orders.length === 0) {
-                tbody.innerHTML = `
-                    <tr><td colspan="8">
-                        <div class="no-orders">No orders yet! Share your store link to get orders.</div>
-                    </td></tr>`;
-                return;
-            }
+async function loadOrders() {
+    try {
+        const response = await fetch('/api/orders', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        allOrders = await response.json();
+        renderOrders(allOrders);
+    } catch (err) {
+        document.getElementById('orderList').innerHTML =
+            '<tr><td colspan="8" style="text-align:center;padding:20px;color:red;">Error loading orders!</td></tr>';
+    }
+}
 
-            tbody.innerHTML = orders.map(o => `
-                <tr>
-                    <td><b>#${o.id}</b></td>
-                    <td>
-                        <b>${o.customer_name}</b><br>
-                        <small style="color:#3A1320">${o.customer_phone}</small>
-                    </td>
-                    <td><small>${o.products}</small></td>
-                    <td><b>₹${o.total_amount}</b></td>
-                    <td>${o.payment_method}</td>
-                    <td>
-                        <span class="status-badge status-${o.status}">
-                            ${o.status}
-                        </span>
-                    </td>
-                    <td>
-                        <select id="status-${o.id}">
-                            <option value="Pending"   ${o.status==='Pending'   ? 'selected':''}>Pending</option>
-                            <option value="Confirmed" ${o.status==='Confirmed' ? 'selected':''}>Confirmed</option>
-                            <option value="Packed"    ${o.status==='Packed'    ? 'selected':''}>Packed</option>
-                            <option value="Shipped"   ${o.status==='Shipped'   ? 'selected':''}>Shipped</option>
-                            <option value="Delivered" ${o.status==='Delivered' ? 'selected':''}>Delivered</option>
-                        </select>
-                        <button class="update-btn" onclick="updateStatus(${o.id})">
-                            Update
-                        </button>
-                    </td>
-                    <td><small>${new Date(o.created_at).toLocaleDateString()}</small></td>
-                </tr>
-            `).join('');
+function filterOrders() {
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate   = document.getElementById('toDate').value;
 
-        } catch (err) {
-            document.getElementById('orderList').innerHTML =
-                '<tr><td colspan="8" style="text-align:center;padding:20px;color:red;">Error loading orders!</td></tr>';
-        }
+    let filtered = allOrders;
+
+    if (fromDate) {
+        filtered = filtered.filter(o =>
+            new Date(o.created_at) >= new Date(fromDate)
+        );
     }
 
+    if (toDate) {
+        const to = new Date(toDate);
+        to.setHours(23, 59, 59);
+        filtered = filtered.filter(o =>
+            new Date(o.created_at) <= to
+        );
+    }
+
+    renderOrders(filtered);
+}
+
+function clearFilter() {
+    document.getElementById('fromDate').value = '';
+    document.getElementById('toDate').value   = '';
+    renderOrders(allOrders);
+}
+
+function renderOrders(orders) {
+    const tbody = document.getElementById('orderList');
+    document.getElementById('orderCount').textContent = orders.length;
+
+    if (!orders || orders.length === 0) {
+        tbody.innerHTML = `
+            <tr><td colspan="8">
+                <div class="no-orders">No orders found!</div>
+            </td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = orders.map(o => `
+        <tr>
+            <td><b>#${o.id}</b></td>
+            <td>
+                <b>${o.customer_name}</b><br>
+                <small style="color:#3A1320">${o.customer_phone}</small>
+            </td>
+            <td><small>${o.products}</small></td>
+            <td><b>₹${o.total_amount}</b></td>
+            <td>${o.payment_method}</td>
+            <td>
+                <span class="status-badge status-${o.status}">
+                    ${o.status}
+                </span>
+            </td>
+            <td>
+                <select id="status-${o.id}">
+                    <option value="Pending"   ${o.status==='Pending'   ? 'selected':''}>Pending</option>
+                    <option value="Confirmed" ${o.status==='Confirmed' ? 'selected':''}>Confirmed</option>
+                    <option value="Packed"    ${o.status==='Packed'    ? 'selected':''}>Packed</option>
+                    <option value="Shipped"   ${o.status==='Shipped'   ? 'selected':''}>Shipped</option>
+                    <option value="Delivered" ${o.status==='Delivered' ? 'selected':''}>Delivered</option>
+                </select>
+                <input type="text" id="tracking-${o.id}"
+                       placeholder="Tracking number"
+                       value="${o.tracking_number || ''}"
+                       style="padding:6px; border:2px solid #d7add1;
+                              border-radius:6px; font-size:12px;
+                              margin-top:6px; width:130px;">
+                <button class="update-btn" onclick="updateStatus(${o.id})">
+                    Update
+                </button>
+            </td>
+            <td><small>${new Date(o.created_at).toLocaleDateString()}</small></td>
+        </tr>
+    `).join('');
+}
     async function updateStatus(orderId) {
         const status = document.getElementById('status-' + orderId).value;
 
