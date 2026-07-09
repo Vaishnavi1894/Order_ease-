@@ -63,9 +63,15 @@ const editProduct = (req, res) => {
 
 // Delete product (seller only)
 const deleteProduct = (req, res) => {
-    db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err) => {
+    // First delete related order_items
+    db.query('DELETE FROM order_items WHERE product_id = ?', [req.params.id], (err) => {
         if (err) return res.status(500).json({ message: 'Delete failed.' });
-        res.json({ message: 'Product deleted!' });
+
+        // Then delete the product
+        db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err) => {
+            if (err) return res.status(500).json({ message: 'Delete failed.' });
+            res.json({ message: 'Product deleted!' });
+        });
     });
 };
 
