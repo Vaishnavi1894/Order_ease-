@@ -131,6 +131,23 @@
             font-weight: 600;
         }
 
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .tracking-box {
+            background: #632048;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
         /* PROGRESS BAR */
         .progress-bar {
             display: flex;
@@ -233,6 +250,23 @@
 
     const steps = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered'];
 
+    function getStatusMessage(status) {
+        switch(status) {
+            case 'Pending':
+                return { msg: '⏳ Your order has been placed! Waiting for seller confirmation.', bg: '#fff3cd', color: '#856404' };
+            case 'Confirmed':
+                return { msg: '✅ Great! Seller has confirmed your order and is preparing it.', bg: '#cce5ff', color: '#004085' };
+            case 'Packed':
+                return { msg: '📦 Your order is packed and ready for dispatch!', bg: '#e2d9f3', color: '#6f42c1' };
+            case 'Shipped':
+                return { msg: '🚚 Your order is on the way! Expected delivery soon.', bg: '#d4edda', color: '#155724' };
+            case 'Delivered':
+                return { msg: '🎉 Your order has been delivered! Enjoy your purchase!', bg: '#d7add1', color: '#632048' };
+            default:
+                return { msg: '📦 Order status updated.', bg: '#f8f9fa', color: '#333' };
+        }
+    }
+
     async function loadOrders() {
         try {
             const response = await fetch('/api/customer/orders', {
@@ -259,6 +293,8 @@
 
             div.innerHTML = orders.map(order => {
                 const currentStep = steps.indexOf(order.status);
+                const statusInfo  = getStatusMessage(order.status);
+
                 return `
                 <div class="order-card">
                     <div class="order-header">
@@ -288,6 +324,17 @@
                     <div class="products-list">
                         🛍️ ${order.product_names}
                     </div>
+
+                    <div class="status-message"
+                         style="background:${statusInfo.bg}; color:${statusInfo.color};">
+                        ${statusInfo.msg}
+                    </div>
+
+                    ${order.tracking_number ? `
+                        <div class="tracking-box">
+                            🚚 Tracking Number: <b>${order.tracking_number}</b>
+                        </div>
+                    ` : ''}
 
                     <div class="progress-bar">
                         ${steps.map((step, i) => `
