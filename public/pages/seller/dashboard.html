@@ -196,10 +196,18 @@
     <!-- MAIN -->
     <div class="main">
 
-        <div class="welcome">
-            <h2>Welcome back, <span id="sellerName">Seller</span>! 👋</h2>
-            <p>Here's what's happening in your shop today.</p>
-        </div>
+        <div class="welcome" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>Welcome back, <span id="sellerName">Seller</span>! 👋</h2>
+        <p>Here's what's happening in your shop today.</p>
+    </div>
+    <button onclick="loadStats()"
+            style="background:#632048; color:white; border:none;
+                   padding:10px 20px; border-radius:8px;
+                   font-size:14px; font-weight:600; cursor:pointer;">
+        🔄 Refresh
+    </button>
+</div>
 
         <!-- STATS -->
 <div class="stats">
@@ -285,8 +293,12 @@
             console.error('Error loading stats');
         }
     }
-
     loadStats();
+
+// Auto refresh every 30 seconds
+setInterval(() => {
+    loadStats();
+}, 30000);
 
     function logout() {
         localStorage.removeItem('sellerToken');
