@@ -202,29 +202,40 @@
         </div>
 
         <!-- STATS -->
-        <div class="stats">
-            <div class="card">
-                <div class="icon">📦</div>
-                <div class="number" id="totalOrders">0</div>
-                <div class="label">Total Orders</div>
-            </div>
-            <div class="card pending">
-                <div class="icon">⏳</div>
-                <div class="number" id="pendingOrders">0</div>
-                <div class="label">Pending Orders</div>
-            </div>
-            <div class="card revenue">
-                <div class="icon">💰</div>
-                <div class="number" id="totalRevenue">₹0</div>
-                <div class="label">Total Revenue</div>
-            </div>
-            <div class="card stock">
-                <div class="icon">⚠️</div>
-                <div class="number" id="lowStock">0</div>
-                <div class="label">Low Stock Items</div>
-            </div>
+<div class="stats">
+    <div class="card" onclick="window.location.href='orders.html'"
+         style="cursor:pointer;">
+        <div class="icon">📦</div>
+        <div class="number" id="totalOrders">0</div>
+        <div class="label">Total Orders</div>
+        <div style="font-size:11px;color:#A6385B;margin-top:6px;">
+            Click to view →
         </div>
-
+    </div>
+    <div class="card pending" onclick="window.location.href='orders.html'"
+         style="cursor:pointer;">
+        <div class="icon">⏳</div>
+        <div class="number" id="pendingOrders">0</div>
+        <div class="label">Pending Orders</div>
+        <div style="font-size:11px;color:#A6385B;margin-top:6px;">
+            Click to update →
+        </div>
+    </div>
+    <div class="card revenue">
+        <div class="icon">💰</div>
+        <div class="number" id="totalRevenue">₹0</div>
+        <div class="label">Total Revenue</div>
+    </div>
+    <div class="card stock" onclick="window.location.href='products.html'"
+         style="cursor:pointer;">
+        <div class="icon">⚠️</div>
+        <div class="number" id="lowStock">0</div>
+        <div class="label">Low Stock Items</div>
+        <div style="font-size:11px;color:#dc3545;margin-top:6px;">
+            Click to manage →
+        </div>
+    </div>
+</div>
         <!-- QUICK ACTIONS -->
         <h3 style="color:#F5E1E8; margin-bottom:16px;">Quick Actions</h3>
         <div class="actions">
