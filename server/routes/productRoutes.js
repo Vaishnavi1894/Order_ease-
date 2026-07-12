@@ -9,9 +9,9 @@ require('dotenv').config();
 
 // Cloudinary config
 cloudinary.config({
-    cloud_name : process.env.vknbc4nh,
-    api_key    : process.env.295639296734389,
-    api_secret : process.env.V1BjXAAKk-GA6DumA-HXQzk9pFg
+    cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+    api_key    : process.env.CLOUDINARY_API_KEY,
+    api_secret : process.env.CLOUDINARY_API_SECRET
 });
 
 // Multer Cloudinary storage
