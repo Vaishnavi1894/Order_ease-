@@ -115,7 +115,7 @@
                 <tr>
                     <td>
                         <img class="product-img"
-                             src="/images/${p.image}"
+                             src="${p.image.startsWith('http') ? p.image : '/images/' + p.image}"
                              onerror="this.src='https://placehold.co/50'"
                              alt="${p.name}">
                     </td>

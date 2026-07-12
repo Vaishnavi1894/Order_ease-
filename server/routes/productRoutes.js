@@ -1,15 +1,29 @@
-const express  = require('express');
-const router   = express.Router();
-const multer   = require('multer');
-const path     = require('path');
+const express    = require('express');
+const router     = express.Router();
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer     = require('multer');
 const { getAllProducts, getProduct, addProduct, editProduct, deleteProduct } = require('../controllers/productController');
 const { sellerAuth } = require('../middleware/auth');
+require('dotenv').config();
 
-// Multer setup for image uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'public/images/'),
-    filename:    (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+// Cloudinary config
+cloudinary.config({
+    cloud_name : process.env.vknbc4nh,
+    api_key    : process.env.295639296734389,
+    api_secret : process.env.V1BjXAAKk-GA6DumA-HXQzk9pFg
 });
+
+// Multer Cloudinary storage
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder        : 'orderease',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+        transformation : [{ width: 500, height: 500, crop: 'limit' }]
+    }
+});
+
 const upload = multer({ storage });
 
 router.get('/',       getAllProducts);
