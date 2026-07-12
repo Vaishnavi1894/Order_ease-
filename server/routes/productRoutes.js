@@ -7,14 +7,12 @@ const { getAllProducts, getProduct, addProduct, editProduct, deleteProduct } = r
 const { sellerAuth } = require('../middleware/auth');
 require('dotenv').config();
 
-// Cloudinary config
 cloudinary.config({
     cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
     api_key    : process.env.CLOUDINARY_API_KEY,
     api_secret : process.env.CLOUDINARY_API_SECRET
 });
 
-// Multer Cloudinary storage
 const storage = new CloudinaryStorage({
     cloudinary,
     params: {
